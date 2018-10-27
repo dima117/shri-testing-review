@@ -56,8 +56,7 @@ style: |
   - встреча_с_животным(заяц)
   - встреча_с_животным(волк)
   - встреча_с_животным(медведь)
-- встреча с лисой и смерть
-
+- встреча с лисой
 - встреча_с_животным
 - {:.next} песенка
 
@@ -110,7 +109,6 @@ class GitHelpers {
         return this.git().then(/* ... */);
     }
 }
-
 // git.test.js
 it ('из вывода git парсятся поля hash, timestamp, author, msg', () => {
     const gitStub = () => Promise.resolve('...');
@@ -148,7 +146,6 @@ function createController(historyStub) {
         return getHistoryFn().then(/* ... */);
     };
 }
-
 // indexController.test.js
 it ('...', () => {
     const historyStub = () => Promise.resolve({ /* ... */});
@@ -159,7 +156,7 @@ it ('...', () => {
 });
 ```
 
-## Код, нужный только в тестах - ок.<br /><br />Уродливый код - не ок.
+## Код, нужный только в&nbsp;тестах - ок.<br /><br />Уродливый код - не ок.
 {:.blockquote}
 
 ## заглушки для express
@@ -183,6 +180,7 @@ it ('...', () => {
 {:.shout}
 
 ##  ~~[proxyrequire](https://www.npmjs.com/package/proxyquire)~~<br /><br />~~[mock-require](https://www.npmjs.com/package/mock-require)~~
+{:.shout}
 
 ## Асинхронность
 {:.section}
