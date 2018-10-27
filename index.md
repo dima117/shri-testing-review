@@ -31,253 +31,220 @@ style: |
 
 </div>
 
-## Название раздела
+## Алгоритм
+
+  - разбить на блоки
+  - смотрим интерфейс, находим сценарии
+  - если логика сценария находится внутри блока, пишем модульный тест
+  - если важно взаимодействие блоков или в блоке мало логики, пишем интеграционный тест
+
+## 1. Разбиение на блоки
 {:.section}
 
-### Верхний колонтитул
+## Сказка про колобка
 
-## Длинная цитата переносится на несколько строк
+- побег от бабушки
+- встреча с зайцем
+- встреча с волком
+- встреча с медведем
+- встреча с лисой и смерть
+
+## Сказка про колобка
+
+- побег от бабушки
+- встречи с неопасными животными
+  - встреча_с_животным(заяц)
+  - встреча_с_животным(волк)
+  - встреча_с_животным(медведь)
+- встреча с лисой и смерть
+
+- встреча_с_животным
+- {:.next} песенка
+
+## Учебный проект
+
+- контроллеры
+- работа в git
+- навигация
+
+## 2. Сценарии
+{:.section}
+
+## Сценарии
+
+  - контроллеры: ошибка/не ошибка
+  - навигация: генерация ссылок, хлебные крошки
+  - git: история, файлы, содержимое
+
+## Зависимости
+{:.section}
+
+## опциональные параметры
+{:.fullscreen}
+
+```js
+// git.js
+function gitHistory(git = executeGit) {
+    return git().then(/* ... */);
+}
+
+// git.test.js
+it ('из вывода git парсятся поля hash, timestamp, author, msg', () => {
+    const gitStub = () => Promise.resolve('...');
+
+    const result = gitHistory(gitStub);
+    // ...
+});
+```
+
+## переписать на классы
+{:.fullscreen}
+
+```js
+// git.js
+class GitHelpers {
+    constructor(gitStub) {
+        this.git = gitStub || executeGit;
+    }
+    gitHistory() {
+        return this.git().then(/* ... */);
+    }
+}
+
+// git.test.js
+it ('из вывода git парсятся поля hash, timestamp, author, msg', () => {
+    const gitStub = () => Promise.resolve('...');
+    // разные экземпляры в каждом тесте
+    const result = new GitHelpers(gitStub).gitHistory();
+    // ...
+});
+```
+
+## контроллер express
+{:.fullscreen}
+
+```js
+function(req, res, next) {
+    getHistory()
+        .then(data => {
+            res.render({ 
+                data,
+                // ... 
+            });
+        },
+        err => next(err));
+}
+```
+
+## фабрика
+{:.fullscreen}
+
+```js
+// indexController.js
+function createController(historyStub) {
+    const getHistoryFn = historyStub || getHistory;
+
+    return function(req, res, next) {
+        return getHistoryFn().then(/* ... */);
+    };
+}
+
+// indexController.test.js
+it ('...', () => {
+    const historyStub = () => Promise.resolve({ /* ... */});
+    const indexController = createController(historyStub);
+
+    indexController(...);
+    // ...
+});
+```
+
+## Код, нужный только в тестах - ок.<br /><br />Уродливый код - не ок.
 {:.blockquote}
 
-### Источник
-
-## Заголовок
-
-Основной текст
-
-**Ключевая мысль**
-
-- Маркированный список
-- Маркированный список
-
-1. Нумерованный список
-2. Нумерованный список
-
-### Источник
-
-## Заголовок
-
-Элементы появляются по очереди
-
-1. {:.next}Нумерованный список
-2. {:.next}Нумерованный список
-3. {:.next}Нумерованный список
-4. {:.next}Нумерованный список
-
-
-### Источник
-
-## Заголовок
-{:.images}
-
-![](themes/yandex2/images/images-one.svg)
-
-### Источник
-
-## Заголовок
-{:.images .two}
-
-![](themes/yandex2/images/images-two.svg)
-*Текст*
-
-![](themes/yandex2/images/images-two.svg)
-*Текст*
-
-### Источник
-
-## Заголовок
-{:.images .three}
-
-![](themes/yandex2/images/images-three.svg)
-*Текст*
-
-![](themes/yandex2/images/images-three.svg)
-*Текст*
-
-![](themes/yandex2/images/images-three.svg)
-*Текст*
-
-### Источник
-
-## Заголовок
-
-![](themes/yandex2/images/image-right.svg)
-{:.image-right}
-
-Основной текст
-
-**Ключевая мысль**
-
-- Маркированный список
-- Маркированный список
-
-1. Нумерованный список
-2. Нумерованный список
-
-### Источник
-
-## Заголовок
-
-<!-- библиотека пиктограмм https://patterns.yandex-team.ru/presentations?typeIn=icons -->
-
-![](themes/yandex2/images/icons.svg)
-{:.icon-left}
-
-Основной текст
-
-**Ключевая мысль**
-
-- Маркированный список
-- Маркированный список
-
-1. Нумерованный список
-2. Нумерованный список
-
-### Источник
-
-## Заголовок
-{:.icons}
-
-<!-- библиотека пиктограмм https://patterns.yandex-team.ru/presentations?typeIn=icons -->
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-### Источник
-
-## Заголовок
-{:.icons .four}
-
-<!-- библиотека пиктограмм https://patterns.yandex-team.ru/presentations?typeIn=icons -->
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-### Источник
-
-## Заголовок
-{:.icons .five}
-
-<!-- библиотека пиктограмм https://patterns.yandex-team.ru/presentations?typeIn=icons -->
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-![](themes/yandex2/images/icons.svg)
-*Текст*
-
-### Источник
-
-## Заголовок будет скрыт
+## заглушки для express
 {:.fullscreen}
-
-![](themes/yandex2/images/images-fullscreen.svg)
-
-## Заголовок будет скрыт
-{:.fullscreen}
-
-![](themes/yandex2/images/images-fullscreen.svg)
-
-<figure markdown="1">
-Текст
-</figure>
-
-## Таблица
-
-|  Locavore     |  Umami       |  Helvetica |  Vegan     |
-+---------------|--------------|------------|------------+
-|  Fingerstache<br/>The second line |  Kale        |  Chips     |  Keytar    |
-|  Sriracha     |  Gluten-free |  Ennui     |  Keffiyeh  |
-|  Thundercats  |  Jean        |  Shorts    |  Biodiesel |
-|* Terry        |* Richardson  |* Swag      |* Blog      |
-
-Текст
-
-### Источник
-
-## Исходный код (html)
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Shower</title> <!--Comment-->
-    <link rel="stylesheet" href="screen.css">
-</head>
-<body>Hello!</body>
-</html>
-```
-
-## Исходный код (js)
-
-Пояснение для кода.
 
 ```js
-var i, j, over, data = new Array(2, 34.12, 4.7, 0, 234, 5);
-var test = false;
+// filesController.test.js
+it ('...', () => {
+    const reqStub = { query: { hash: '123', 0: 'a/b/c.js' }};
+    const resStub = { render: sinon.spy() };
 
-for (i = 1; i < data.length; i++) {
-    over = data[i]; 
-    for (j = i - 1; j >= 0 && data[j] > over; j--) {
-        data[j + 1] = data[j];
+    const fileTreeStub = () => Promise.resolve({ /* ... */});
+    const filesController = createController(fileTreeStub);
+
+    filesController(reqStub, resStub);
+    // ...
+});
+```
+
+## [sinon-express-mock](https://www.npmjs.com/package/sinon-express-mock)
+{:.shout}
+
+##  ~~[proxyrequire](https://www.npmjs.com/package/proxyquire)~~<br /><br />~~[mock-require](https://www.npmjs.com/package/mock-require)~~
+
+## Асинхронность
+{:.section}
+
+## git helpers
+{:.fullscreen}
+
+```js
+// git.test.js
+it ('...', async () => {
+    // ...
+
+    const result = await gitHistory(/* ... */);
+    // ...
+});
+```
+
+## [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
+{:.shout}
+
+## controllers
+{:.fullscreen}
+
+```js
+// controller.test.js
+it ('...', (done) => {
+    const resStub = {
+        render: (...args) => {
+            done();
+        }
     }
-    data[j + 1] = over;
-}
-alert(data.join(','));
+    // ...
+
+    indexController(reqStub, resStub);
+});
 ```
 
-## Исходный код (css)
+## Хорошие практики
 
-```css
-.head {
-    background-color: yellow;
-}
+- четкая структура теста
+- понятные названия переменных
+- изоляция тестов
+- тесты организованы
 
-.head__logo {
-    background-image: url(images/logo.svg);
-}
+## Интеграционные тесты
+{:.section}
 
-#test, body {
-    font-weight: bold;
-}
+## Что проверять
 
-```
+- сценарии из задания
+- блоки без логики
+- внешний вид
 
-## Этот заголовок будет скрыт
-{:.fullscreen}
+## Как проверять
 
-```js
-// исходный код (на весь экран)
+- открытие страницы: по title или по наличию ключевого блока
+- содержимое
+  - текст в DOM-элементе
+  - количество элементов в списке
+- внешний вид
 
-var x = 10;
-for (var i = 0; i < x; i++) {
-    console.log('hello!');
-}
-```
+**{:.next}Как сделать заглушку для данных?**
 
 ## Контакты 
 {:.contacts}
@@ -314,13 +281,12 @@ for (var i = 0; i < x; i++) {
 -------
 
 <!-- left -->
-- {:.skype}author
-- {:.mail}author@yandex-team.ru
-- {:.github}author
+- {:.mail}dima117a@yandex-team.ru
+- {:.github}dima117
 
 <!-- right -->
-- {:.twitter}@author
-- {:.facebook}author
+- {:.skype}dima117a
+- {:.telegram}dima117a
 
 <!-- 
 
