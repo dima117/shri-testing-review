@@ -130,7 +130,7 @@ style: |
 {:.fullscreen}
 
 ```js
-// api.js                                                                                       опциональные параметры
+// api.js                                                опциональные параметры
 function getData(send = fetsh) {
     return send('/api/handler').then(/* ... */);
 }
@@ -148,7 +148,7 @@ it ('из ответа сервера парсятся поля hash, timestamp,
 {:.fullscreen}
 
 ```js
-// api.js                                                                                         переписать на классы 
+// api.js                                                  переписать на классы 
 class ApiClient {
     constructor(fetchStub) {
         this.fetch = fetchStub || fetch;
@@ -187,7 +187,7 @@ function(req, res, next) {
 {:.fullscreen}
 
 ```js
-// indexController.js                                                                                       // фабрика
+// indexController.js                                                   фабрика
 function createController(getDataStub) {
     const getDatafn = getDataStub || getData;
 
