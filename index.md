@@ -53,7 +53,7 @@ style: |
 ## Проблемы  
   
 - не все важные сценарии покрыты тестами
-- проверяется не тот результат
+- проверяется не тот результат<sup>*</sup>
 - проверяется только ошибочный сценарий
 
 ## Тесты скриншотами
@@ -71,10 +71,6 @@ style: |
 - закрашивать часть элементов
 </div>
 
-&nbsp;
-
-{:.next}не забыть сохранить начальные скриншоты
-
 ## Все написали интеграционные тесты
 {:.shout}
 
@@ -84,9 +80,9 @@ style: |
 ## Первая причина:<br/>изменения верстки
 
 - вынести селекторы в константы
-- паттерн page object
+- паттерн page object<sup>*</sup>
 - селекторы могут быть хрупкими
-- использовать тестовые css классы.
+- использовать тестовые css классы<sup>*</sup>
 
 ## Вторая причина:<br/>нестабильная инфраструктура
 
@@ -99,8 +95,8 @@ style: |
 
  - {:.next}отправка данных меняет общее состояние
  - {:.next}сложно застабать БД и сторонний бэкенд
- - {:.next}недоступность элементов: виртуальный скролл, перекрытие другими элементами, disabled, 
- - {:.next}асинхронные действия - нужно ждать элементы
+ - {:.next}недоступность элементов: виртуальный скролл, перекрытие другими элементами, disabled 
+ - {:.next}асинхронные действия — нужно ждать элементы
  - {:.next}ошибки в тестах, например, забыли await
 
 ## Алгоритм
@@ -134,16 +130,18 @@ style: |
 {:.fullscreen}
 
 ```js
-// git.js
-function gitHistory(git = executeGit) {
-    return git().then(/* ... */);
+// опциональные параметры
+
+// api.js
+function getData(send = fetsh) {
+    return send('/api/handler').then(/* ... */);
 }
 
-// git.test.js
-it ('из вывода git парсятся поля hash, timestamp, author, msg', () => {
-    const gitStub = () => Promise.resolve('...');
+// api.test.js
+it ('из ответа сервера парсятся поля hash, timestamp, author, msg', () => {
+    const fetchStub = () => Promise.resolve('...');
 
-    const result = gitHistory(gitStub);
+    const result = getData(fetchStub);
     // ...
 });
 ```
@@ -152,20 +150,22 @@ it ('из вывода git парсятся поля hash, timestamp, author, ms
 {:.fullscreen}
 
 ```js
-// git.js
-class GitHelpers {
-    constructor(gitStub) {
-        this.git = gitStub || executeGit;
+// переписать на классы
+
+// api.js
+class ApiClient {
+    constructor(fetchStub) {
+        this.fetch = fetchStub || fetch;
     }
-    gitHistory() {
-        return this.git().then(/* ... */);
+    getData() {
+        return this.fetch('/api/handler').then(/* ... */);
     }
 }
 // git.test.js
 it ('из вывода git парсятся поля hash, timestamp, author, msg', () => {
-    const gitStub = () => Promise.resolve('...');
+    const fetchStub = () => Promise.resolve('...');
     // разные экземпляры в каждом тесте
-    const result = new GitHelpers(gitStub).gitHistory();
+    const result = new ApiClient(fetchStub).getData();
     // ...
 });
 ```
@@ -174,8 +174,10 @@ it ('из вывода git парсятся поля hash, timestamp, author, ms
 {:.fullscreen}
 
 ```js
+// контроллер express
+
 function(req, res, next) {
-    getHistory()
+    getData()
         .then(data => {
             res.render({ 
                 data,
@@ -190,18 +192,20 @@ function(req, res, next) {
 {:.fullscreen}
 
 ```js
+// фабрика
+
 // indexController.js
-function createController(historyStub) {
-    const getHistoryFn = historyStub || getHistory;
+function createController(getDataStub) {
+    const getDatafn = getDataStub || getData;
 
     return function(req, res, next) {
-        return getHistoryFn().then(/* ... */);
+        return getDatafn().then(/* ... */);
     };
 }
 // indexController.test.js
 it ('...', () => {
-    const historyStub = () => Promise.resolve({ /* ... */});
-    const indexController = createController(historyStub);
+    const getDataStub = () => Promise.resolve({ /* ... */});
+    const indexController = createController(getDataStub);
 
     indexController(...);
     // ...
