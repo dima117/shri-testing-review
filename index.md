@@ -123,6 +123,28 @@ style: |
 
 ![](pictures/instances.png)
 
+## Схема прототипы и экземпляры
+{:.fullscreen}
+
+```js
+// было
+const STUB = { .. };
+
+it('', () => {
+    const testData = STUB;
+    // ...
+})
+
+
+// стало
+const initStub = () => { .. }; 
+
+it('', () => {
+    const testData = initStub();
+    // ...
+})
+```
+
 ## Рефакторинг!
 {:.shout}
 
